@@ -6,86 +6,150 @@
 /*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:58:45 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/11/29 18:11:15 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/11/30 17:29:57 by mseghrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "get_next_line.h" // Assuming this contains includes and BUFFER_SIZE
+#include "get_next_line.h"
+// Assuming this contains helper declaration and BUFFER_SIZE
+#include <stdlib.h>
+#include <string.h> // for strchr
+#include <string.h>
+#include <unistd.h>
 
-char	*extract_line(char *box)
+static char	*append_buffer(char *buf, size_t buf_len, char *tmp, ssize_t r)
 {
-	int		i;
+	char	*new_buf;
+
+	new_buf = malloc(buf_len + r + 1);
+	if (!new_buf)
+	{
+		free(buf);
+		return (NULL);
+	}
+	if (buf)
+		memcpy(new_buf, buf, buf_len);
+	memcpy(new_buf + buf_len, tmp, r);
+	new_buf[buf_len + r] = '\0';
+	free(buf);
+	return (new_buf);
+}
+
+// ------------------ Helper: read_into_buffer ------------------
+static char	*read_into_buffer(int fd, char **buf, size_t *buf_len)
+{
+	char	*tmp;
+	ssize_t	r;
+
+	tmp = malloc(BUFFER_SIZE);
+	if (!tmp)
+		return (NULL);
+	while (!*buf || !memchr(*buf, '\n', *buf_len))
+	{
+		r = read(fd, tmp, BUFFER_SIZE);
+		if (r <= 0)
+			break ;
+		*buf = append_buffer(*buf, *buf_len, tmp, r);
+		if (!*buf)
+		{
+			*buf_len = 0;
+			free(tmp);
+			return (NULL);
+		}
+		*buf_len += r;
+	}
+	free(tmp);
+	return (*buf);
+}
+
+// ------------------ Helper: extract_line_part ------------------
+static char	*extract_line_part(char *buf, size_t buf_len, size_t *line_len)
+{
+	size_t	i;
 	char	*line;
 
 	i = 0;
-	if (!box)
-		return (NULL);
-	while (box[i] && box[i] != '\n')
+	while (i < buf_len && buf[i] != '\n')
 		i++;
-	line = malloc(i + 2); // +1 for '\n' +1 for '\0'
+	if (i < buf_len && buf[i] == '\n')
+		i++;
+	*line_len = i;
+	line = malloc(i + 1);
 	if (!line)
 		return (NULL);
-	i = 0;
-	while (box[i] && box[i] != '\n')
-	{
-		line[i] = box[i];
-		i++;
-	}
-	if (box[i] == '\n')
-		line[i++] = '\n';
+	memcpy(line, buf, i);
 	line[i] = '\0';
 	return (line);
 }
 
-char	*update_box(char *box)
+// ------------------ Helper: shift_buffer ------------------
+static void	shift_buffer(char **buf, size_t *buf_len, size_t line_len)
 {
-	int		i;
-	int		j;
-	char	*new_box;
+	char	*new_buf;
 
-	i = 0, j = 0;
-	if (!box)
-		return (NULL);
-	while (box[i] && box[i] != '\n')
-		i++;
-	if (!box[i])
+	if (line_len < *buf_len)
 	{
-		free(box);
-		return (NULL);
+		*buf_len -= line_len;
+		new_buf = malloc(*buf_len + 1);
+		if (!new_buf)
+		{
+			free(*buf);
+			*buf = NULL;
+			*buf_len = 0;
+			return ;
+		}
+		memcpy(new_buf, *buf + line_len, *buf_len);
+		new_buf[*buf_len] = '\0';
+		free(*buf);
+		*buf = new_buf;
 	}
-	new_box = malloc(ft_strlen(box) - i + 1);
-	if (!new_box)
-		return (NULL);
-	i++; // skip '\n'
-	while (box[i])
-		new_box[j++] = box[i++];
-	new_box[j] = '\0';
-	free(box);
-	return (new_box);
+	else
+	{
+		free(*buf);
+		*buf = NULL;
+		*buf_len = 0;
+	}
 }
 
+// ------------------ Helper: extract_line_and_shift ------------------
+static char	*extract_line_and_shift(char **buf, size_t *buf_len)
+{
+	size_t	line_len;
+	char	*line;
+
+	line = extract_line_part(*buf, *buf_len, &line_len);
+	if (!line)
+	{
+		free(*buf);
+		*buf = NULL;
+		*buf_len = 0;
+		return (NULL);
+	}
+	shift_buffer(buf, buf_len, line_len);
+	return (line);
+}
+
+// ------------------ Main: get_next_line ------------------
 char	*get_next_line(int fd)
 {
-	static char *box;
-	char *buffer;
+	static char *buf = NULL;
+	static size_t buf_len = 0;
 	char *line;
-	int bytes;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (!buffer)
+
+	if (!read_into_buffer(fd, &buf, &buf_len))
 		return (NULL);
-	bytes = read(fd, buffer, BUFFER_SIZE);
-	if (bytes <= 0)
+	if (!buf || buf_len == 0)
 	{
-		free(buffer);
+		free(buf);
+		buf = NULL;
+		buf_len = 0;
 		return (NULL);
 	}
-	buffer[bytes] = '\0';
-	box = ft_strjoin(box, buffer);
-	line = extract_line(box);
-	box = update_box(box);
-	free(buffer);
+	line = extract_line_and_shift(&buf, &buf_len);
 	return (line);
 }

@@ -6,7 +6,7 @@
 /*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:59:04 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/11/29 17:47:23 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:24:34 by mseghrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,39 +24,52 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-char	*ft_strjon(char *str1, char *str2)
-{
-	size_t		i;
-	size_t		j;
-	char	*new_str;
+// char	*ft_strjoin(char *str1, char *str2)
+// {
+// 	size_t	i;
+// 	size_t	j;
+// 	char	*new_str;
+// 	size_t	len1;
+// 	size_t	len2;
 
-	i = 0;
-	j = 0;
-	new_str = malloc(sizeof(char) * (ft_strlen(str1) + ft_strlen(str2) + 1));
-	if (!new_str)
-		return (NULL);
-	while (str1[i])
-	{
-		new_str[i] = str1[i];
-		i++;
-	}
-	while (str2[j])
-	{
-		new_str[i + j] = str2[j];
-		j++;
-	}
-	new_str[i + j] = '\0';
-	free(str1);
-	return (new_str);
-}
+// 	len1 = ft_strlen(str1);
+// 	len2 = ft_strlen(str2);
+// 	new_str = malloc(sizeof(char) * (len1 + len2 + 1));
+// 	if (!new_str)
+// 	{
+// 		// if allocation fails, we should not free str1 here because caller still owns it.
+// 		return (NULL);
+// 	}
+// 	i = 0;
+// 	if (str1)
+// 	{
+// 		while (i < len1)
+// 		{
+// 			new_str[i] = str1[i];
+// 			i++;
+// 		}
+// 	}
+// 	j = 0;
+// 	while (j < len2)
+// 	{
+// 		new_str[i + j] = str2[j];
+// 		j++;
+// 	}
+// 	new_str[i + j] = '\0';
+// 	free(str1);
+// 	return (new_str);
+// }
+
 
 char	*ft_strchr(const char *s, int c)
 {
 	size_t i;
 	char *ss;
-
 	char cc;
+	
 	i = 0;
+	ss = (char *)s;
+    cc = (char)c; 
 	while (ss[i])
 	{
 		if (ss[i] == cc)
