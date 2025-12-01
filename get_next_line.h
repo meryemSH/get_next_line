@@ -6,7 +6,7 @@
 /*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:59:14 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/11/30 16:06:10 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/12/01 16:30:39 by mseghrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h> 
 
-// حدد buffer size إذا ما محددتش
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 32
+#define BUFFER_SIZE 5
 #endif
 
-// الدالة الرئيسية
 char	*get_next_line(int fd);
+void	*ft_memcpy(void *dest, const void *src, size_t n);
+void	*ft_memmove(void *dest, const void *src, size_t n);
+void	*ft_memchr(const void *s, int c, size_t n);
 
-// الدوال المساعدة (private)  
-// ممكن تخليهم static فـ .c file، هنا غير للتوضيح
-// size_t	gnl_strlen(char *s);
-// char	*gnl_substr(char *s, size_t n);
-// char	*gnl_shift(char *s, size_t n);
-// char	*gnl_join(char *buf, char *tmp, int r);
 
 #endif

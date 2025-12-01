@@ -6,77 +6,74 @@
 /*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:59:04 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/11/30 16:24:34 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/12/01 15:56:12 by mseghrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *str)
+void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	size_t	i;
+	size_t		i;
+	char		*dst;
+	const char	*serc;
 
 	i = 0;
-	if (!str)
-		return (0);
-	while (str[i])
-		i++;
-	return (i);
-}
-
-// char	*ft_strjoin(char *str1, char *str2)
-// {
-// 	size_t	i;
-// 	size_t	j;
-// 	char	*new_str;
-// 	size_t	len1;
-// 	size_t	len2;
-
-// 	len1 = ft_strlen(str1);
-// 	len2 = ft_strlen(str2);
-// 	new_str = malloc(sizeof(char) * (len1 + len2 + 1));
-// 	if (!new_str)
-// 	{
-// 		// if allocation fails, we should not free str1 here because caller still owns it.
-// 		return (NULL);
-// 	}
-// 	i = 0;
-// 	if (str1)
-// 	{
-// 		while (i < len1)
-// 		{
-// 			new_str[i] = str1[i];
-// 			i++;
-// 		}
-// 	}
-// 	j = 0;
-// 	while (j < len2)
-// 	{
-// 		new_str[i + j] = str2[j];
-// 		j++;
-// 	}
-// 	new_str[i + j] = '\0';
-// 	free(str1);
-// 	return (new_str);
-// }
-
-
-char	*ft_strchr(const char *s, int c)
-{
-	size_t i;
-	char *ss;
-	char cc;
-	
-	i = 0;
-	ss = (char *)s;
-    cc = (char)c; 
-	while (ss[i])
+	dst = (char *)dest;
+	serc = (char *)src;
+	while (i < n)
 	{
-		if (ss[i] == cc)
-			return (&ss[i]);
+		dst[i] = serc[i];
 		i++;
 	}
-	if (cc == '\0')
-		return (&ss[i]);
+	return (dest);
+}
+
+void	*ft_memmove(void *dest, const void *src, size_t n)
+{
+	unsigned char		*d;
+	const unsigned char	*s;
+	size_t				i;
+
+	d = (unsigned char *)dest;
+	s = (const unsigned char *)src;
+	if (d > s)
+	{
+		i = n;
+		while (i > 0)
+		{
+			i--;
+			d[i] = s[i];
+		}
+	}
+	else
+	{
+		i = 0;
+		while (i < n)
+		{
+			d[i] = s[i];
+			i++;
+		}
+	}
+	return (dest);
+}
+
+void	*ft_memchr(const void *s, int c, size_t n)
+{
+	unsigned char	*ss;
+	unsigned char	cc;
+	size_t			i;
+
+	ss = (unsigned char *)s;
+	cc = (unsigned char)c;
+	i = 0;
+	while (i < n)
+	{
+		if (ss[i] == cc)
+		{
+			return ((void *)&ss[i]);
+		}
+		i++;
+	}
 	return (NULL);
 }
