@@ -6,7 +6,7 @@
 /*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:58:45 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/12/01 16:50:39 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/12/01 16:57:36 by mseghrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ static char	*append_buffer(char *buf, size_t *buf_len, char *tmp, ssize_t r)
 		return (NULL);
 	}
 	if (buf)
-		memcpy(new_buf, buf, *buf_len);
-	memcpy(new_buf + *buf_len, tmp, r);
+		ft_memcpy(new_buf, buf, *buf_len);
+	ft_memcpy(new_buf + *buf_len, tmp, r);
 	new_buf[*buf_len + r] = '\0';
 	*buf_len += r;
 	free(buf);
@@ -40,7 +40,7 @@ static char	*read_until_newline(int fd, char *buf, size_t *buf_len)
 	tmp = malloc(BUFFER_SIZE + 1);
 	if (!tmp)
 		return (NULL);
-	while (!buf || !memchr(buf, '\n', *buf_len))
+	while (!buf || !ft_memchr(buf, '\n', *buf_len))
 	{
 		r = read(fd, tmp, BUFFER_SIZE);
 		if (r <= 0)
@@ -67,7 +67,7 @@ static char	*extract_line(char *buf, size_t *buf_len)
 	char	*line;
 
 	line_len = 0;
-	newline = memchr(buf, '\n', *buf_len);
+	newline = ft_memchr(buf, '\n', *buf_len);
 	if (newline)
 		line_len = newline - buf + 1;
 	else
@@ -75,11 +75,11 @@ static char	*extract_line(char *buf, size_t *buf_len)
 	line = malloc(line_len + 1);
 	if (!line)
 		return (NULL);
-	memcpy(line, buf, line_len);
+	ft_memcpy(line, buf, line_len);
 	line[line_len] = '\0';
 	*buf_len -= line_len;
 	if (*buf_len > 0)
-		memmove(buf, buf + line_len, *buf_len);
+		ft_memmove(buf, buf + line_len, *buf_len);
 	else
 		buf[0] = '\0';
 	return (line);
