@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: meryemseghrouchniidrissi <meryemseghrou    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:59:04 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/12/01 15:56:12 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/12/02 08:06:24 by meryemseghr      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 
 void	*ft_memchr(const void *s, int c, size_t n)
 {
-	unsigned char	*ss;
-	unsigned char	cc;
-	size_t			i;
+	unsigned char *ss;
+	unsigned char cc;
+	size_t i;
 
 	ss = (unsigned char *)s;
 	cc = (unsigned char)c;

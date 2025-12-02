@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mseghrou <mseghrou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: meryemseghrouchniidrissi <meryemseghrou    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:58:45 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/12/01 16:57:36 by mseghrou         ###   ########.fr       */
+/*   Updated: 2025/12/02 11:40:32 by meryemseghr      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,14 @@ static char	*read_until_newline(int fd, char *buf, size_t *buf_len)
 	while (!buf || !ft_memchr(buf, '\n', *buf_len))
 	{
 		r = read(fd, tmp, BUFFER_SIZE);
-		if (r <= 0)
+		if (r < 0)
+		{
+			free(buf);
+			*buf_len = 0;
+			free(tmp);
+			return (NULL);
+		}
+		if (r == 0)
 			break ;
 		buf = append_buffer(buf, buf_len, tmp, r);
 		if (!buf)
@@ -87,15 +94,15 @@ static char	*extract_line(char *buf, size_t *buf_len)
 
 char	*get_next_line(int fd)
 {
-	static char		*buf = {NULL};
-	static size_t	buf_len = {0};
+	static char		*buf = NULL;
+	static size_t	buf_len = 0;
 	char			*line;
 
-	if (fd < 0 || fd >= 1024 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
 	buf = read_until_newline(fd, buf, &buf_len);
 	if (!buf)
-		return (NULL);  
+		return (NULL);
 	line = extract_line(buf, &buf_len);
 	if (buf_len == 0 && buf)
 	{
@@ -105,30 +112,19 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
+// #include <stdio.h>
 
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
 
-#include <stdio.h>
-
-int main(void)
-{
-    int     fd;
-    char    *line;
-
-    fd = open("oo.txt",O_RDWR | O_CREAT , 0777);
-	write(fd, "hellow\n world\n",14);
-	//////lseek(fd, 0, SEEK_SET);
-    if (fd < 0)
-    {
-        printf("Error: can't open file\n");
-        return (1);
-    }
-
-    while ((line = get_next_line(fd)) != NULL)
-    {
-        printf("%s", line);
-        free(line);
-    }
-
-    close(fd);
-    return (0);
-}
+// 	fd = open("oo.txt", O_RDONLY);
+// 	while ((line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
