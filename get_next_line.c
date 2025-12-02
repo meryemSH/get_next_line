@@ -6,7 +6,7 @@
 /*   By: meryemseghrouchniidrissi <meryemseghrou    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 17:58:45 by mseghrou          #+#    #+#             */
-/*   Updated: 2025/12/02 11:40:32 by meryemseghr      ###   ########.fr       */
+/*   Updated: 2025/12/02 11:58:05 by meryemseghr      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,35 +43,28 @@ static char	*read_until_newline(int fd, char *buf, size_t *buf_len)
 	while (!buf || !ft_memchr(buf, '\n', *buf_len))
 	{
 		r = read(fd, tmp, BUFFER_SIZE);
-		if (r < 0)
-		{
-			free(buf);
-			*buf_len = 0;
-			free(tmp);
-			return (NULL);
-		}
-		if (r == 0)
+		if (r <= 0)
 			break ;
 		buf = append_buffer(buf, buf_len, tmp, r);
 		if (!buf)
-		{
-			free(tmp);
-			return (NULL);
-		}
+			return ((free(tmp)), NULL);
 	}
-	free(tmp);
-	if (!buf || *buf_len == 0)
+	if (r < 0 || !buf || *buf_len == 0)
 	{
+		free(tmp);
 		free(buf);
+		*buf_len = 0;
 		return (NULL);
 	}
+	free(tmp);
 	return (buf);
 }
+
 static char	*extract_line(char *buf, size_t *buf_len)
 {
-	size_t	line_len;
 	char	*newline;
 	char	*line;
+	size_t	line_len;
 
 	line_len = 0;
 	newline = ft_memchr(buf, '\n', *buf_len);
